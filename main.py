@@ -13,7 +13,12 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-# Function to check if the number is prime
+# Function to check if a number is Armstrong
+def is_armstrong(n: int) -> bool:
+    digits = [int(digit) for digit in str(n)]
+    return n == sum(digit ** len(digits) for digit in digits)
+
+# Function to check if a number is prime
 def is_prime(n: int) -> bool:
     if n <= 1:
         return False
@@ -22,38 +27,13 @@ def is_prime(n: int) -> bool:
             return False
     return True
 
-
-# Function to check if the number is perfect
-def is_perfect(n: int) -> bool:
-    divisors_sum = sum(i for i in range(1, n) if n % i == 0)
-    return divisors_sum == n
-
-
-# Function to check if the number is Armstrong
-def is_armstrong(n: int) -> bool:
-    digits = [int(digit) for digit in str(n)]
-    power = len(digits)
-    return sum(digit ** power for digit in digits) == n
-
-
-# Function to calculate the sum of digits
-def digit_sum(n: int) -> int:
-    return sum(int(digit) for digit in str(n))
-
-
-# Function to check if the number is odd or even
-def is_odd(n: int) -> bool:
-    return n % 2 != 0
-
-
-# Fetch fun fact from Numbers API
+# Function to fetch fun fact from Numbers API
 def get_fun_fact(n: int) -> str:
     response = requests.get(f"http://numbersapi.com/{n}?json")
     if response.status_code == 200:
-        return response.json().get("text", "")
+        return response.json().get('text', 'No fun fact available.')
     else:
-        return "No fun fact available."
-
+        raise HTTPException(status_code=400, detail="Failed to fetch data from the Numbers API.")
 
 # API Endpoint
 @app.get("/api/classify-number")
@@ -62,23 +42,31 @@ async def classify_number(number: int):
     if not isinstance(number, int):
         raise HTTPException(status_code=400, detail="Invalid input. Please provide a valid integer.")
 
-    # Check for properties
+    # Calculate properties
+    is_prime_number = is_prime(number)
+    is_armstrong_number = is_armstrong(number)
+    parity = "odd" if number % 2 != 0 else "even"
+    
+    # Prepare properties based on Armstrong and parity
     properties = []
-    if is_armstrong(number):
+    if is_armstrong_number:
         properties.append("armstrong")
-    if is_odd(number):
+    if parity == "odd":
         properties.append("odd")
     else:
         properties.append("even")
 
+    # Fetch fun fact from Numbers API
+    fun_fact = get_fun_fact(number)
+
     # Prepare the response
     response = {
         "number": number,
-        "is_prime": is_prime(number),
-        "is_perfect": is_perfect(number),
+        "is_prime": is_prime_number,
+        "is_perfect": False,  # This task doesn't include perfect number classification
         "properties": properties,
-        "digit_sum": digit_sum(number),
-        "fun_fact": get_fun_fact(number)
+        "digit_sum": sum(int(digit) for digit in str(number)),
+        "fun_fact": fun_fact
     }
 
     return response
