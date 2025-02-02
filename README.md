@@ -130,11 +130,9 @@ This project is licensed under the **MIT License**.
 ---
 
 ## 📞 **Contact**
-- **GitHub:** [your-username](https://github.com/your-username)  
-- **Email:** your-email@example.com  
+- **GitHub:** [0x00whitecode](https://github.com/0x00whitecode)  
+- **Email:** x10tion007@gmail.com  
 
 ---
 
 🚀 **Happy Coding!** 🚀  
-
-Let me know if you need any modifications! 😊
