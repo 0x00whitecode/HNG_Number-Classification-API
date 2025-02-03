@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 import httpx  # Use httpx for async requests
 
@@ -50,7 +50,11 @@ async def get_fun_fact(n: int) -> str:
 
 # API Endpoint
 @app.get("/api/classify-number")
-async def classify_number(number: int):
+async def classify_number(number: int = Query(None, description="The number to classify")):
+    # Handle missing number parameter
+    if number is None:
+        return {"number": "alphabet", "error": True}
+
     properties = []
     if is_armstrong(number):
         properties.append("armstrong")
