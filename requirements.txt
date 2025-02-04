@@ -3,3 +3,4 @@ gunicorn
 uvicorn
 requests
 httpx
+pytest
